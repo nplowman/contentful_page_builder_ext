@@ -1,0 +1,57 @@
+<meta charset="utf-8">
+<title>vue_page_builder demo</title>
+<script src="https://unpkg.com/vue@latest"></script>
+<script src="/vue_page_builder.umd.min.js"></script>
+<script src="https://unpkg.com/contentful-ui-extensions-sdk@3"></script>
+<link rel="stylesheet" href="/vue_page_builder.css">
+
+
+<body>
+  <div id="app"></div>
+
+  <script>
+    window.contentfulExtension.init(function (sdk) {
+      var locations = window.contentfulExtension.locations
+
+      if (sdk.location.is(locations.LOCATION_DIALOG)) {
+        Vue.use(window.vue_page_builder.ComponentLibrary)
+        Vue.use(window.vue_page_builder.VModal)
+        sdk.window.startAutoResizer()
+
+        return new Vue({
+          el: '#app',
+          render: (h) => {
+            return h(window.vue_page_builder.App)
+          },
+          data() {
+            return {
+              savePageCallback: function (response) {
+                sdk.close(response.pageData)
+              },
+              addedComponents: sdk.parameters.invocation.savedValue,
+            }
+          }
+        });
+      }
+      else {
+        var button = document.createElement('button')
+        button.onclick = function() {
+          sdk.dialogs.openExtension({
+            width: 'fullWidth',
+            minHeight: 600,
+            allowHeightOverflow: true,
+            parameters: {
+              savedValue: sdk.field.getValue()
+            }
+          })
+          .then(data => {
+            sdk.field.setValue(data)
+          })
+        }
+        button.innerText = 'Open Page Builder'
+        document.body.appendChild(button)
+      }
+    })
+  </script>
+
+</body>

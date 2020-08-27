@@ -1,0 +1,6 @@
+{
+  "id": "vue_page_builder",
+  "name": "Vue Page Builder",
+  "srcdoc": "./index.html",
+  "fieldTypes": ["Object"]
+}
